@@ -1,7 +1,7 @@
 //DECLARO CARRITO VACIO
 let carritoDeCompras = []
 
-            //FALTA VALIDAR CARRITO CON LOCALSTORAGE
+        
 
 //SELECTORES
 const cardContainerQuery = document.querySelector("#cardContainer")
@@ -42,16 +42,27 @@ const renderizarProductos = (arrayProductos) =>{
         boton.addEventListener("click", ()=>{
          if (producto.id == 1) {
             cantidadWraps ++
-            console.log("Wraps=" + cantidadWraps ) 
+            
           }else if (producto.id == 3) {
             cantidadBaguettes ++
-            console.log("Baguettes=" + cantidadBaguettes ) 
+           
           }else {
             cantidadEnsaladas ++
-            console.log("Ensaladas=" + cantidadEnsaladas ) 
+           
           }
           agregarProductoAlCarrito(producto.id)
+
+          //LOCAL STORAGE
+          if(localStorage.getItem('carritoDeCompras')) {
+            carritoDeCompras = JSON.parse(localStorage.getItem('carritoDeCompras'))
+          }else {
+            carritoDeCompras = []
+          }
+          carritoDeCompras.push(producto)
+          localStorage.setItem('carritoDeCompras', JSON.stringify(carritoDeCompras))
+          
         })
+
     })
 }
 
@@ -60,31 +71,24 @@ const agregarProductoAlCarrito = (productoID) =>{
   const productoPrueba = productos.find((prod)=> prod.id === productoID) 
   carritoDeCompras.push(productoPrueba)
 
-  const nuevoDivCarrito = document.createElement("div.prueba")
+  const nuevoDivCarrito = document.createElement("div")
     nuevoDivCarrito.innerHTML= `
     <h3 class="cardTitle">${productoPrueba.producto} <span>$${productoPrueba.precio} </span> <span id="cantBaguettes"> x ${identificarProducto(productoID)} </h3>`
     carritoContainer.append(nuevoDivCarrito)
   
-  // if (cantidadBaguettes == 1) {
-  //   const nuevoDivCarrito = document.createElement("div")
-  //   nuevoDivCarrito.innerHTML= `
-  //   <h3 class="cardTitle">${productoPrueba.producto} <span>$${productoPrueba.precio} </span> <span id="cantBaguettes"> x ${identificarProducto(productoID)} </h3>`
-  //   carritoContainer.append(nuevoDivCarrito)
-  // } else {
-  //   const spanBaguettes = document.querySelector('#cantBaguettes')
-  //   spanBaguettes.innerHTML = `x ${cantidadBaguettes}`
-  // }
+
 const sumaTotal = ()=> {
   total = total + productoPrueba.precio 
   return total
 }
   totalCarrito.innerHTML = `$${sumaTotal()}`
+
   //VACIAR CARRITO
 
   vaciarCarro.addEventListener("click", ()=>{
-
+    
+    localStorage.clear()
     carritoDeCompras = []
-    console.log(carritoDeCompras);
     carritoContainer.innerHTML= ``
     totalCarrito.innerHTML = `$0`
     total = 0
@@ -92,6 +96,7 @@ const sumaTotal = ()=> {
     cantidadEnsaladas = 0
     cantidadWraps = 0
     })
+
     //CONFIRMAR COMPRA
   document.querySelector('#botonConfirmar').addEventListener ('click', ()=> {
     Swal.fire({
@@ -109,8 +114,8 @@ const sumaTotal = ()=> {
             'Tu orden esta en proceso!',
             'success'
           )
+            localStorage.clear()
             carritoDeCompras = []
-            console.log(carritoDeCompras);
             carritoContainer.innerHTML= ``
             totalCarrito.innerHTML = `$0`
             total = 0
@@ -121,10 +126,6 @@ const sumaTotal = ()=> {
         }
       })
 })
- 
-
-
-            //FALTA AGREGAR EL PRODUCTO AL LOCALSTORAGE
 
   Toastify({
     text: "Agregaste tu producto exitosamente ",
@@ -139,7 +140,7 @@ const sumaTotal = ()=> {
     },
     onClick: function(){} // Callback after click
   }).showToast();
-  console.log(carritoDeCompras)
+  
 }
 
 
